@@ -1,0 +1,37 @@
+name: Deploy Storybook Preview
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  push:
+    branches:
+      - "main"
+
+jobs:
+  deploy-storybook-preview:
+    name: Deploy Storybook Preview
+    runs-on: ubuntu-latest
+    env:
+      BUCKET_DIR: ${{github.event.number}}
+      PREVIEW_URL: "http://psammead-preview.tools.bbc.co.uk/${{github.event.number}}"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Install Node Modules and Build
+        if: github.event.pull_request.closed != true # Run this step for all PR events except `closed`
+        run: echo "Running because pull_request.closed is false"
+
+      - name: "Deploy storybook to preview environment"
+        if: github.event.pull_request.closed != true # Run this step for all PR events except `closed`
+        run: echo "Running because pull_request.closed is false"
+
+      - name: "Cleaning up storybook preview for PR#${{ env.BUCKET_DIR }}"
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
